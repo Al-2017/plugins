@@ -15,7 +15,8 @@ class GoogleMap extends StatefulWidget {
   /// Creates a widget displaying data from Google Maps services.
   ///
   /// [AssertionError] will be thrown if [initialCameraPosition] is null;
-  const GoogleMap({
+  //const GoogleMap({
+  GoogleMap({
     Key key,
     @required this.initialCameraPosition,
     this.onMapCreated,
@@ -103,13 +104,17 @@ class GoogleMap extends StatefulWidget {
   final EdgeInsets padding;
 
   /// Markers to be placed on the map.
-  final Set<Marker> markers;
+  //final Set<Marker> markers;
+  /// Modified by Al to allow update to markers from outside this class
+  Set<Marker> markers;
 
   /// Polygons to be placed on the map.
   final Set<Polygon> polygons;
 
   /// Polylines to be placed on the map.
-  final Set<Polyline> polylines;
+  //final Set<Polyline> polylines;
+  /// Modified by Al to allow update to polylines from outside this class
+  Set<Polyline> polylines;
 
   /// Circles to be placed on the map.
   final Set<Circle> circles;
@@ -199,9 +204,24 @@ class GoogleMap extends StatefulWidget {
   /// were not claimed by any other gesture recognizer.
   final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers;
 
+  /// added by Al to allow access to _GoogleMapState methods
+  _GoogleMapState _state;
+
+  /// added by Al to allow access to allow update _GoogleMapState markers from outside
+  Future<void> updateMarkers(Set<Marker> imarkers) async {
+    markers = imarkers;
+    _state._updateMarkers();
+  }
+
+  /// added by Al to allow access to allow update _GoogleMapState polylines from outside
+  void updatePolylines(Set<Polyline> ipolylines) async {
+    polylines = ipolylines;
+    _state._updatePolylines();
+  }
+
   /// Creates a [State] for this [GoogleMap].
   @override
-  State createState() => _GoogleMapState();
+  State createState() => _state = _GoogleMapState();
 }
 
 class _GoogleMapState extends State<GoogleMap> {
